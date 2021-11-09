@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- bean: 程序中的任何类，在Spring眼里，就是一个bean
+    <bean id="helloWorld" class="cn.bdqn.helloworld.HelloWorld">
+        <property name="username" value="mybatis"/>
+    </bean>-->
+
+    <!--
+    <bean id="personService" class="cn.bdqn.service.PersonServiceImpl"></bean>
+    -->
+
+    <!-- 1、将工厂对象注册到Spring容器
+    <bean id="factory" class="cn.bdqn.factory.PersonServiceImplFactory"/>-->
+    <!-- 2、定义Bean(通过userServiceFactory中提供的实例方法)
+    <bean id="personService" factory-bean="factory" factory-method="createBean"></bean>-->
+
+    <!-- 通过工厂中提供的静态方法创建对象
+    <bean id="personService2" class="cn.bdqn.factory.PersonServiceImplFactory2"
+                              factory-method="createBean"/>-->
+
+    <!--
+    <bean id="personService" class="cn.bdqn.service.PersonServiceImpl" scope="prototype"
+          init-method="init" destroy-method="destroy"
+    />-->
+
+    <!--
+    <bean id="person" class="cn.bdqn.domain.Person">
+        <constructor-arg name="id" value="1"></constructor-arg>
+        <constructor-arg name="name" value="Spring"></constructor-arg>
+        <constructor-arg name="birthday" ref="currentDate"></constructor-arg>
+    </bean>
+
+    <bean id="currentDate" class="java.util.Date"/>
+
+    <bean id="user" class="cn.bdqn.domain.User">
+    </bean>-->
+
+    <!--
+    <bean id="cat" class="cn.bdqn.domain.Cat">
+        <property name="arrs">
+            <set>
+                <value>HelloWorld</value>
+                <value>Spring</value>
+            </set>
+        </property>
+        <property name="arrList">
+            <set>
+                <value>于博</value>
+                <value>MyBatis</value>
+            </set>
+        </property>
+        <property name="arrSet">
+            <set>
+                <value>HTML</value>
+                <value>CSS3</value>
+            </set>
+        </property>
+        <property name="arrMap">
+            <props>
+               <prop key="S001">高圆圆</prop>
+                <prop key="S002">于博</prop>
+            </props>
+        </property>
+        <property name="props">
+            <props>
+                <prop key="S001">张三丰</prop>
+                <prop key="S002">张三</prop>
+            </props>
+        </property>
+    </bean>
+        -->
+    <context:component-scan base-package="cn.bdqn"/>
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!--  配置AOP的环境工作  -->
+    <!-- 1、将PigService注册到Spring容器中-->
+    <bean id="pigService" class="cn.bdqn.service.PigServiceImpl"/>
+    <bean id="personService" class="cn.bdqn.service.PersonServiceImpl"/>
+    <!-- 2、真正的开始AOP的配置-->
+    <!-- 2.1 将日志Logger(功能代码的封装类)注册到Spring容器中-->
+    <bean id="logger" class="cn.bdqn.aspect.Logger"/>
+    <!-- 2.2 AOP的配置实现对业务功能的扩展(保存猪的同时实现日志的打印)-->
+    <aop:config>
+
+        <!-- 切入点表达式的提取 -->
+        <aop:pointcut id="pointCut" expression="execution(* cn.bdqn.service.PigServiceImpl.*(..)))"/>
+
+        <!--配置日志切面-->
+        <aop:aspect id="loggerAdvice" ref="logger">
+
+            <!--配置增强的类型，作用就是增强要应用到切入点上
+            <aop:before method="beforePrintLog"
+                        pointcut-ref="pointCut"></aop:before>-->
+
+            <!--配置后置通知
+            <aop:after-returning method="afterReturningPrintLog"
+                                 pointcut-ref="pointCut"
+            ></aop:after-returning>-->
+
+            <!-- 配置异常通知
+            <aop:after-throwing method="afterThrowingPrintLog"
+                                pointcut-ref="pointCut"
+            ></aop:after-throwing>-->
+
+            <!--
+            <aop:after method="afterPrintLog"
+                       pointcut-ref="pointCut"></aop:after>-->
+
+            <aop:around method="aroundPrintLog"
+                        pointcut-ref="pointCut"></aop:around>
+
+        </aop:aspect>
+    </aop:config>
+
+</beans>
