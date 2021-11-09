@@ -3,6 +3,11 @@ package cn.bdqn.helloworld;
 public class HelloWorld {
 
     private String username;
+	
+	// 于博修改的文件
+	public String void(){
+		return null;
+	}
 
     public String getUsername() {
         return username;
