@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 接口代理
+    1、namespace的值就是Mapper接口的全路径
+ -->
+<mapper namespace="cn.bdqn.mapper.EmployeeMapper">
+
+    <!-- 根据id查询员工 -->
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id = #{id}
+    </select>
+
+    <insert id="save" parameterType="cn.bdqn.domain.Employee">
+        insert into
+            t_employee(emp_name,sex,email,birthday,address)
+        values
+            (#{empName},#{sex},#{email},#{birthday},#{address})
+    </insert>
+
+    <!-- 根据姓名和性别查询员工 -->
+    <select id="queryByNameAndSex" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            emp_name = #{empName} and
+            sex = #{sex}
+    </select>
+
+
+
+    <!-- 根据姓名和性别查询员工 -->
+    <select id="queryByNameAndSex_2" parameterType="cn.bdqn.domain.Employee" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            emp_name = #{empName} and
+            sex = #{sex}
+    </select>
+
+    <!-- 根据姓名和性别查询员工 -->
+    <select id="queryByNameAndSex_3" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            emp_name = #{empName} and
+            sex = #{sex}
+    </select>
+
+    <!-- 根据id列表查询员工 -->
+    <select id="queryByIds" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id in (#{ids[0]},#{ids[1]})
+    </select>
+
+    <!-- 根据id列表查询员工 -->
+    <select id="queryByIds_2" resultType="cn.bdqn.domain.Employee">
+       select
+            id,emp_name as empName ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id in (#{xx[0]},#{xx[1]})
+    </select>
+
+    <!-- 根据id列表查询员工，返回值是一个Map -->
+    <select id="queryByIdReturnMap" resultType="java.util.Map">
+       select
+            id,emp_name ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id = #{id}
+    </select>
+
+    <!-- 根据id列表查询员工 -->
+    <select id="queryByIds_3" resultType="map">
+       select
+            id,emp_name ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id in (#{array[0]},#{array[1]})
+    </select>
+
+    <select id="queryByIds_4" resultType="map">
+       select
+            id,emp_name ,sex,email,birthday,address
+        from
+            t_employee
+        where
+            id in (#{array[0]},#{array[1]})
+    </select>
+
+    <select id="queryByIdAndDept" resultType="cn.bdqn.domain.Employee">
+       select
+            emp.id,emp.emp_name as empName ,emp.sex,emp.email,emp.birthday,emp.address,
+            dept.id as deptId , dept.dept_name as deptName
+        from
+            t_employee emp , t_dept dept
+        where
+            emp.dept_id = dept.id AND
+            emp.id = #{id}
+    </select>
+
+    <resultMap id="EmployeeAndDeptResultMap" type="cn.bdqn.domain.Employee">
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName"/>
+
+        <!-- 映射部门属性 -->
+        <result column="deptId" property="dept.id"></result>
+        <result column="dept_name" property="dept.deptName"></result>
+
+    </resultMap>
+
+    <select id="queryByIdAndDept_2" resultMap="EmployeeAndDeptResultMap">
+       select
+            emp.id,emp.emp_name ,emp.sex,emp.email,emp.birthday,emp.address,
+            dept.id as deptId , dept.dept_name
+        from
+            t_employee emp , t_dept dept
+        where
+            emp.dept_id = dept.id AND
+            emp.id = #{id}
+    </select>
+
+
+    <resultMap id="EmployeeAndDeptResultMap_2" type="cn.bdqn.domain.Employee">
+
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName"></result>
+        <result column="sex" property="sex"></result>
+
+        <!--关联部门信息-->
+        <association property="dept" javaType="cn.bdqn.domain.Dept">
+            <id column="deptId" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+
+    </resultMap>
+
+
+    <select id="queryByIdAndDept_3" resultMap="EmployeeAndDeptResultMap_2">
+       select
+            emp.id,emp.emp_name ,emp.sex,emp.email,emp.birthday,emp.address,
+            dept.id as deptId , dept.dept_name
+        from
+            t_employee emp , t_dept dept
+        where
+            emp.dept_id = dept.id AND
+            emp.id = #{id}
+    </select>
+
+</mapper>
